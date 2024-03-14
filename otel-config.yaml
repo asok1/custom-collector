@@ -1,0 +1,47 @@
+
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: localhost:6378
+
+processors:
+  batch:
+exporters:
+  debug:
+    verbosity: detailed
+  file/traces:
+    path: ./traces_logs.json
+    rotation:
+      max_megabytes: 1
+      max_backups: 3
+  file/metrics:
+    path: ./metrics_logs.json
+    rotation:
+      max_megabytes: 1
+      max_backups: 3
+  # otlphttp:
+  #   endpoint: http://localhost:6378
+  #   tls:
+  #     insecure: true
+  #   compression: none
+  customhttpexporter:
+    endpoint: http://localhost:6379
+    # tls:
+    #   insecure: true
+    # compression: none
+
+service:
+  telemetry:
+    metrics:
+      address: 0.0.0.0:8889
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug,file/traces]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug,file/metrics,customhttpexporter]
+

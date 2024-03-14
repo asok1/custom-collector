@@ -1,0 +1,11 @@
+docker run \
+  --config=otel-config-prom.yaml
+  otel/opentelemetry-collector-contrib:latest \
+  
+
+docker run \
+-v "${PWD}/otel-config-prom.yaml":/otel-config-prom.yaml \
+-v "$PWD/metrics_logs.json":/metrics_logs.json \
+-p 4318:4318 \
+otel/opentelemetry-collector-contrib:latest \
+--config otel-config-prom.yaml;
